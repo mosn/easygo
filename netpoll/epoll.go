@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"golang.org/x/sys/unix"
+	"runtime"
 )
 
 // EpollEvent represents epoll events configuration bit mask.
@@ -276,5 +277,8 @@ func (ep *Epoll) wait(onError func(error)) {
 			events = make([]unix.EpollEvent, n*2)
 			callbacks = make([]func(EpollEvent), 0, n*2)
 		}
+
+		// give more chance to other goroutine
+		runtime.Gosched()
 	}
 }

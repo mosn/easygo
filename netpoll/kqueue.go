@@ -8,6 +8,7 @@ import (
 	"unsafe"
 
 	"golang.org/x/sys/unix"
+	"runtime"
 )
 
 // KeventFilter is a kqueue event filter.
@@ -389,6 +390,9 @@ func (k *Kqueue) wait(onError func(error)) {
 			evs = make([]unix.Kevent_t, n*2)
 			cbs = make([]KeventHandler, n*2)
 		}
+
+		// give more chance to other goroutine
+		runtime.Gosched()
 	}
 }
 
